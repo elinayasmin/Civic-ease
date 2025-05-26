@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Civic Ease</title>
+    <link rel="stylesheet" href="dept(home).css">
+</head>
+<body>
+    <nav class="sidebar">
+        <button class="menu-toggle">☰</button>
+        <div class="menu">
+            <button onclick="navigate('home')">Home</button>
+            <button onclick="navigate('about')">About Us</button>
+            <button onclick="navigate('department-complaints')">Complaints</button>
+            
+        </div>
+    </nav>
+    
+    <main id="content">
+        <h1>Civic Ease</h1>
+        <p>Welcome to the civic complaint portal(department).</p>
+    </main>
+
+    <script>
+        function navigate(page) {
+            document.getElementById('content').innerHTML = `<h1>${page.replace('-', ' ')}</h1><p>Content for ${page}</p>`;
+        }
+
+        document.querySelector(".menu-toggle").addEventListener("click", function() {
+            document.querySelector(".menu").classList.toggle("active");
+        });
+    
+    function navigate(page) {
+        if (page === 'department-complaints') {
+            window.location.href = "dept(complain).html";
+        } else {
+            document.getElementById('content').innerHTML = `<h1>${page.replace('-', ' ')}</h1><p>Content for ${page}</p>`;
+        }
+    }
+
+
+    </script>
+</body>
+</html>

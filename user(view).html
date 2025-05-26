@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Complaints - Civic Ease</title>
+    <link rel="stylesheet" href="user(view).css">
+</head>
+<body>
+    <main id="view-complaint">
+        <h1>View Complaints</h1>
+        
+        <!-- Filter Form -->
+        <form id="filterForm">
+            <label for="complaintNumber">Complaint Number</label>
+            <input type="text" id="complaintNumber" placeholder="Enter Complaint Number">
+
+            <label for="location">Location</label>
+            <input type="text" id="location" placeholder="Enter Location">
+
+            <label for="department">Department</label>
+            <select id="department">
+                <option value="">Select</option>
+                <option value="Dept 1">Dept 1</option>
+                <option value="Dept 2">Dept 2</option>
+                <option value="Dept 3">Dept 3</option>
+                <option value="Dept 4">Dept 4</option>
+                <option value="Dept 5">Dept 5</option>
+            </select>
+
+            <label for="issue">Issue</label>
+            <input type="text" id="issue" placeholder="Enter Issue">
+
+            <label for="specificLocation">Specific Location</label>
+            <input type="text" id="specificLocation" placeholder="Enter Specific Location">
+
+            <button type="submit">Search</button>
+        </form>
+
+        <!-- Table for Complaint Results -->
+        <table id="complaintsTable">
+            <thead>
+                <tr>
+                    <th>Sl. No.</th>
+                    <th>Issue</th>
+                    <th>No. of Complaints</th>
+                    <th>Send to Department</th>
+                    <th>Confirmed</th>
+                    <th>Working</th>
+                    <th>Photos/Videos</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Results will be dynamically added here -->
+            </tbody>
+        </table>
+    </main>
+
+    <script>
+        document.getElementById("filterForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            let filters = {
+                complaintNumber: document.getElementById("complaintNumber").value,
+                location: document.getElementById("location").value,
+                department: document.getElementById("department").value,
+                issue: document.getElementById("issue").value,
+                specificLocation: document.getElementById("specificLocation").value,
+            };
+
+            if (!filters.complaintNumber && !filters.location && !filters.department && !filters.issue && !filters.specificLocation) {
+                alert("Please select at least one filter option.");
+                return;
+            }
+
+            // Simulating fetching filtered data from a database
+            let results = [
+                { slno: 1, issue: "Road Repair", complaints: 5, department: "Dept 1", confirmed: "Yes", working: "No", media: "View" },
+                { slno: 2, issue: "Water Leakage", complaints: 3, department: "Dept 2", confirmed: "Yes", working: "Yes", media: "View" },
+            ];
+
+            let tbody = document.querySelector("#complaintsTable tbody");
+            tbody.innerHTML = "";
+
+            results.forEach((row, index) => {
+                let tr = document.createElement("tr");
+                tr.innerHTML = `<td>${index + 1}</td><td>${row.issue}</td><td>${row.complaints}</td><td>${row.department}</td><td>${row.confirmed}</td><td>${row.working}</td><td><a href="#">${row.media}</a></td>`;
+                tbody.appendChild(tr);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #FFF3E0;
+    color: #333;
+}
+main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centers vertically */
+    align-items: center; /* Centers horizontally */
+    height: 100vh; /* Full viewport height */
+}
+.sidebar {
+    width: 200px;
+    background-color: #FF9800;
+    padding: 10px;
+    position: fixed;
+    height: 100vh;
+}
+
+.menu-toggle {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: white;
+}
+
+.menu {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.menu.active {
+    display: flex;
+}
+
+.menu button {
+    background-color: #FFE0B2;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.menu button:hover {
+    background-color: #FFCC80;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
+h1 {
+    font-family: 'Roboto', sans-serif;
+    font-size: 32px; /* Adjust the size */
+    color: #FF9800; /* Keep the orange theme */
+}

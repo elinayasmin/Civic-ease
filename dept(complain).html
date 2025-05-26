@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Department Complaints</title>
+    <link rel="stylesheet" href="dept(complain).css">
+</head>
+<body>
+    <main id="department-complaints">
+        <h1>Department Complaints</h1>
+
+        <!-- Search Filters -->
+        <form id="filterForm">
+            <label for="locationButton">Location:</label>
+            <button type="button" id="locationButton">Select Location</button>
+
+            <div id="locationFields" style="display: none;">
+                <label for="country">Country:</label>
+                <select id="country">
+                    <option value="India" selected>India</option>
+                </select>
+
+                <label for="state">State:</label>
+                <input type="text" id="state" placeholder="Type to search..." list="stateList">
+                <datalist id="stateList">
+                    <!-- States will be dynamically populated -->
+                </datalist>
+
+                <label for="city">City:</label>
+                <input type="text" id="city" placeholder="Enter the city" list="cityList">
+                <datalist id="cityList">
+                    <!-- Cities will be dynamically populated based on state -->
+                </datalist>
+
+                <label for="specificLocation">Specific Location:</label>
+                <input type="text" id="specificLocation" placeholder="Enter Specific Location">
+            </div>
+
+            <label for="department">Department:</label>
+            <select id="department">
+                <option value="">Select</option>
+                <option value="Dept 1">Dept 1</option>
+                <option value="Dept 2">Dept 2</option>
+                <option value="Dept 3">Dept 3</option>
+                <option value="Dept 4">Dept 4</option>
+                <option value="Dept 5">Dept 5</option>
+            </select>
+
+            <label for="issue">Issue:</label>
+            <input type="text" id="issue" placeholder="Enter Issue">
+
+            <button type="submit">Search Complaint</button>
+        </form>
+
+        <!-- Table for Complaint Results -->
+        <table id="complaintsTable">
+            <thead>
+                <tr>
+                    <th>Issue</th>
+                    <th>No. of Requests</th>
+                    <th>Complaint No.</th>
+                    <th>Confirmed</th>
+                    <th>Working</th>
+                    <th>Photos/Videos</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Results will be dynamically generated -->
+            </tbody>
+        </table>
+    </main>
+
+    <script>
+        document.getElementById("locationButton").addEventListener("click", function () {
+            document.getElementById("locationFields").style.display = "block";
+        });
+
+        let states = [
+            "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat", "Haryana",
+            "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya",
+            "Mizoram", "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura",
+            "Uttar Pradesh", "Uttarakhand", "West Bengal"
+        ];
+
+        let stateList = document.getElementById("stateList");
+        states.forEach(state => {
+            let option = document.createElement("option");
+            option.value = state;
+            stateList.appendChild(option);
+        });
+
+        document.getElementById("state").addEventListener("input", function () {
+            let selectedState = this.value;
+            let cities = {
+                "Maharashtra": ["Mumbai", "Pune", "Nagpur"],
+                "Karnataka": ["Bangalore", "Mysore", "Mangalore"],
+                "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai"],
+                "West Bengal": ["Kolkata", "Darjeeling", "Siliguri"]
+            };
+
+            let cityList = document.getElementById("cityList");
+            cityList.innerHTML = "";
+            if (cities[selectedState]) {
+                cities[selectedState].forEach(city => {
+                    let option = document.createElement("option");
+                    option.value = city;
+                    cityList.appendChild(option);
+                });
+            }
+        });
+    </script>
+</body>
+</html>

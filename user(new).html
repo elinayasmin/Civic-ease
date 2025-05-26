@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Complaint - Civic Ease</title>
+    <link rel="stylesheet" href="user(new).css">
+</head>
+<body>
+    <main id="new-complaint">
+        <h1>New Complaint</h1>
+        <form id="complaintForm">
+
+            <!-- Location Section -->
+            <label>Location *</label>
+            <select id="country">
+                <option value="India" selected>India</option>
+            </select>
+
+            <input type="text" id="state" placeholder="State" list="stateList" required>
+            <datalist id="stateList">
+                <option value="Andhra Pradesh"></option>
+                <option value="Arunachal Pradesh"></option>
+                <option value="Assam"></option>
+                <option value="Bihar"></option>
+                <option value="Chhattisgarh"></option>
+                <!-- Add all states -->
+            </datalist>
+
+            <input type="text" id="city" placeholder="City" required>
+            <input type="text" id="district" placeholder="District">
+            <input type="text" id="specificLocation" placeholder="Specific Location">
+
+            <!-- Department Dropdown -->
+            <label>Department</label>
+            <select id="department">
+                <option value="Dept 1">Dept 1</option>
+                <option value="Dept 2">Dept 2</option>
+                <option value="Dept 3">Dept 3</option>
+                <option value="Dept 4">Dept 4</option>
+                <option value="Dept 5">Dept 5</option>
+            </select>
+
+            <!-- Issue & Description -->
+            <label>Issue *</label>
+            <input type="text" id="issue" required>
+
+            <label>Description *</label>
+            <textarea id="description" required></textarea>
+
+            <!-- File Upload (Photos/Videos) -->
+            <label>Upload Proof (Max 5 Photos/Videos)</label>
+            <input type="file" id="proof" accept="image/*,video/*" multiple>
+            <div id="proofPreview"></div>
+
+            <!-- Valid Document Upload -->
+            <label>Valid Document (Min 1, Max 2) *</label>
+            <input type="file" id="validDoc" accept=".pdf,.jpg,.png" multiple required>
+            <div id="docPreview"></div>
+
+            <button type="submit">Submit Complaint</button>
+        </form>
+    </main>
+
+    <script>
+        document.getElementById("proof").addEventListener("change", function () {
+            let files = this.files;
+            let preview = document.getElementById("proofPreview");
+            preview.innerHTML = "";
+            if (files.length > 5) {
+                alert("You can only upload up to 5 files.");
+                this.value = "";
+                return;
+            }
+            for (let file of files) {
+                let div = document.createElement("div");
+                div.textContent = file.name;
+                preview.appendChild(div);
+            }
+        });
+
+        document.getElementById("validDoc").addEventListener("change", function () {
+            let files = this.files;
+            let preview = document.getElementById("docPreview");
+            preview.innerHTML = "";
+            if (files.length > 2) {
+                alert("You can only upload up to 2 valid documents.");
+                this.value = "";
+                return;
+            }
+            for (let file of files) {
+                let div = document.createElement("div");
+                div.textContent = file.name;
+                preview.appendChild(div);
+            }
+        });
+    </script>
+</body>
+</html>
