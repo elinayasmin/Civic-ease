@@ -1,99 +1,209 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>New Complaint - Civic Ease</title>
-    <link rel="stylesheet" href="user(new).css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Complaint - Civic Ease</title>
+  <link rel="stylesheet" href="user(new).css">
+  <style>
+    /* Simple modal styling */
+    #codeModal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+    }
+    #codeModalContent {
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      text-align: center;
+    }
+    #codeModalContent button {
+      margin-top: 15px;
+      padding: 10px 20px;
+    }
+  </style>
 </head>
 <body>
-    <main id="new-complaint">
-        <h1>New Complaint</h1>
-        <form id="complaintForm">
+  <main id="new-complaint">
+    <h1>New Complaint</h1>
+    <form id="complaintForm">
+      <!-- Location Section -->
+      <label>Location *</label>
+      <select id="country">
+        <option value="India" selected>India</option>
+      </select>
 
-            <!-- Location Section -->
-            <label>Location *</label>
-            <select id="country">
-                <option value="India" selected>India</option>
-            </select>
+      <!-- State Dropdown: All Indian States (or a sample set) -->
+      <select id="state" required>
+         <option value="">Select State</option>
+         <!-- You can add a full list here -->
+         <option value="Delhi">Delhi</option>
+         <option value="Maharashtra">Maharashtra</option>
+         <option value="Karnataka">Karnataka</option>
+         <option value="Tamil Nadu">Tamil Nadu</option>
+      </select>
 
-            <input type="text" id="state" placeholder="State" list="stateList" required>
-            <datalist id="stateList">
-                <option value="Andhra Pradesh"></option>
-                <option value="Arunachal Pradesh"></option>
-                <option value="Assam"></option>
-                <option value="Bihar"></option>
-                <option value="Chhattisgarh"></option>
-                <!-- Add all states -->
-            </datalist>
+      <!-- City Dropdown: Populated dynamically based on chosen state -->
+      <select id="city" required>
+        <option value="">Select City</option>
+      </select>
 
-            <input type="text" id="city" placeholder="City" required>
-            <input type="text" id="district" placeholder="District">
-            <input type="text" id="specificLocation" placeholder="Specific Location">
+      <!-- District -->
+      <input type="text" id="district" placeholder="District">
 
-            <!-- Department Dropdown -->
-            <label>Department</label>
-            <select id="department">
-                <option value="Dept 1">Dept 1</option>
-                <option value="Dept 2">Dept 2</option>
-                <option value="Dept 3">Dept 3</option>
-                <option value="Dept 4">Dept 4</option>
-                <option value="Dept 5">Dept 5</option>
-            </select>
+      <!-- Specific Location -->
+      <input type="text" id="specificLocation" placeholder="Specific Location">
 
-            <!-- Issue & Description -->
-            <label>Issue *</label>
-            <input type="text" id="issue" required>
+      <!-- Pincode Field -->
+      <input type="text" id="pincode" placeholder="Pincode" required>
 
-            <label>Description *</label>
-            <textarea id="description" required></textarea>
+      <!-- Phone Number Field -->
+      <input type="text" id="phone" placeholder="Phone Number" required>
 
-            <!-- File Upload (Photos/Videos) -->
-            <label>Upload Proof (Max 5 Photos/Videos)</label>
-            <input type="file" id="proof" accept="image/*,video/*" multiple>
-            <div id="proofPreview"></div>
+      <!-- Department Dropdown -->
+      <label>Department</label>
+      <select id="department">
+        <option value="Municipal Services">Municipal Services</option>
+        <option value="Public Health">Public Health</option>
+        <option value="Roads &amp; Traffic">Roads &amp; Traffic</option>
+        <option value="Electricity">Electricity</option>
+        <option value="Water Supply">Water Supply</option>
+        <option value="Sanitation">Sanitation</option>
+      </select>
 
-            <!-- Valid Document Upload -->
-            <label>Valid Document (Min 1, Max 2) *</label>
-            <input type="file" id="validDoc" accept=".pdf,.jpg,.png" multiple required>
-            <div id="docPreview"></div>
+      <!-- Issue Dropdown -->
+      <label>Issue *</label>
+      <select id="issue" required>
+        <option value="">Select Issue</option>
+        <option value="Potholes">Potholes</option>
+        <option value="Streetlight Outage">Streetlight Outage</option>
+        <option value="Garbage Disposal">Garbage Disposal</option>
+        <option value="Water Leakage">Water Leakage</option>
+        <option value="Other">Other</option>
+      </select>
 
-            <button type="submit">Submit Complaint</button>
-        </form>
-    </main>
+      <!-- Description -->
+      <label>Description *</label>
+      <textarea id="description" required></textarea>
 
-    <script>
-        document.getElementById("proof").addEventListener("change", function () {
-            let files = this.files;
-            let preview = document.getElementById("proofPreview");
-            preview.innerHTML = "";
-            if (files.length > 5) {
-                alert("You can only upload up to 5 files.");
-                this.value = "";
-                return;
-            }
-            for (let file of files) {
-                let div = document.createElement("div");
-                div.textContent = file.name;
-                preview.appendChild(div);
-            }
+      <!-- File Upload (Photos/Videos) -->
+      <label>Upload Proof (Max 5 Photos/Videos)</label>
+      <input type="file" id="proof" accept="image/*,video/*" multiple>
+      <div id="proofPreview"></div>
+
+      <!-- Valid Document Upload -->
+      <label>Valid Document (Min 1, Max 2) *</label>
+      <input type="file" id="validDoc" accept=".pdf,.jpg,.png" multiple required>
+      <div id="docPreview"></div>
+
+      <button type="submit">Submit Complaint</button>
+    </form>
+  </main>
+
+  <!-- Modal for displaying the generated complaint code -->
+  <div id="codeModal">
+    <div id="codeModalContent">
+      <p id="complaintCodeDisplay"></p>
+      <button id="goHomeBtn">Go Home</button>
+    </div>
+  </div>
+
+  <script>
+    // Populate the city dropdown based on the selected state.
+    const citiesByState = {
+      "Delhi": ["New Delhi", "Dwarka", "Rohini", "Janakpuri"],
+      "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Nashik", "Thane"],
+      "Karnataka": ["Bengaluru", "Mysuru", "Mangalore", "Hubballi"],
+      "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Salem"]
+      // Add more mappings as needed.
+    };
+
+    document.getElementById("state").addEventListener("change", function() {
+      const state = this.value;
+      const citySelect = document.getElementById("city");
+      citySelect.innerHTML = `<option value="">Select City</option>`;
+      if (citiesByState[state]) {
+        citiesByState[state].forEach(city => {
+          const option = document.createElement("option");
+          option.value = city;
+          option.textContent = city;
+          citySelect.appendChild(option);
         });
+      }
+    });
 
-        document.getElementById("validDoc").addEventListener("change", function () {
-            let files = this.files;
-            let preview = document.getElementById("docPreview");
-            preview.innerHTML = "";
-            if (files.length > 2) {
-                alert("You can only upload up to 2 valid documents.");
-                this.value = "";
-                return;
-            }
-            for (let file of files) {
-                let div = document.createElement("div");
-                div.textContent = file.name;
-                preview.appendChild(div);
-            }
-        });
-    </script>
+    // Global object to track complaint counts by state+city+issue key
+    let complaintCounts = {};
+
+    // Listen for form submission
+  document.getElementById("complaintForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    // Before proceeding, ask for confirmation.
+    if (!confirm("Are you sure you want to submit?")) {
+      return;
+    }
+
+    // Get form input values.
+    const state      = document.getElementById("state").value.trim();
+    const city       = document.getElementById("city").value.trim();
+    const pincode    = document.getElementById("pincode").value.trim();
+    const department = document.getElementById("department").value.trim();
+    const issue      = document.getElementById("issue").value.trim();
+    const phone      = document.getElementById("phone").value.trim();
+
+    // Validate required fields.
+    if (!state || !city || !pincode || !department || !issue || !phone) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+
+    // Generate each part of the complaint code:
+    // 1. State prefix: first letter (uppercase)
+    const statePrefix = state.charAt(0).toUpperCase();
+
+    // 2. City prefix: take the first letter of each word in the city (uppercase)
+    const cityPrefix = city.split(" ").map(word => word.charAt(0).toUpperCase()).join("");
+
+    // 3. Pincode: first digit
+    const pincodeDigit = pincode.charAt(0);
+
+    // 4. Department code: for multi-word department, use the first letter of each word.
+    const deptWords = department.trim().split(" ");
+    let deptCode;
+    if (deptWords.length > 1) {
+      deptCode = deptWords.map(word => word.charAt(0).toUpperCase()).join("");
+    } else {
+      deptCode = department.substring(0,2).toUpperCase();
+    }
+
+    // 5. Phone number tail: last three digits.
+    const phoneTail = phone.slice(-3);
+
+    // 6. Count: retrieve and update count for (state+city+issue).
+    const key = (state + city + issue).toUpperCase();
+    let count = complaintCounts[key] || 0;
+    complaintCounts[key] = count + 1; // update for future submissions
+
+    // Construct the final code.
+    const complaintCode = statePrefix + cityPrefix + pincodeDigit + deptCode + phoneTail + count;
+
+    // Display the generated code in a modal popup.
+    document.getElementById("complaintCodeDisplay").textContent = "Your Complaint Code: " + complaintCode;
+    document.getElementById("codeModal").style.display = "flex";
+  });
+
+    // Redirect to home when "Go Home" button is clicked.
+    document.getElementById("goHomeBtn").addEventListener("click", function() {
+      window.location.href = "user(home).html"; // change URL as necessary
+    });
+  </script>
 </body>
 </html>
