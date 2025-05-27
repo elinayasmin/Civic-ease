@@ -127,14 +127,119 @@
       <textarea id="description" required></textarea>
 
       <!-- File Upload (Photos/Videos) -->
-      <label>Upload Proof (Max 5 Photos/Videos)</label>
-      <input type="file" id="proof" accept="image/*,video/*" multiple>
-      <div id="proofPreview"></div>
+      <label>Upload Proof (Only 1 Photo/Video)</label>
+<input type="file" id="proof" accept="image/*,video/*" />
+<div id="proofPreview" style="margin-top: 10px;"></div>
+
+<script>
+  const proofInput = document.getElementById('proof');
+  const proofPreview = document.getElementById('proofPreview');
+
+  proofInput.addEventListener('change', () => {
+    const file = proofInput.files[0]; // get the first file only
+    proofPreview.innerHTML = ''; // clear previous preview
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const wrapper = document.createElement('div');
+        wrapper.style.position = 'relative';
+        wrapper.style.width = '200px';
+
+        const removeBtn = document.createElement('button');
+        removeBtn.textContent = 'Remove';
+        removeBtn.style.position = 'absolute';
+        removeBtn.style.top = '0';
+        removeBtn.style.right = '0';
+        removeBtn.style.background = 'red';
+        removeBtn.style.color = 'white';
+        removeBtn.style.border = 'none';
+        removeBtn.style.cursor = 'pointer';
+        removeBtn.onclick = () => {
+          proofInput.value = ''; // clear the input
+          proofPreview.innerHTML = ''; // remove preview
+        };
+
+        let preview;
+        if (file.type.startsWith('image/')) {
+          preview = document.createElement('img');
+          preview.src = e.target.result;
+          preview.style.width = '100%';
+        } else if (file.type.startsWith('video/')) {
+          preview = document.createElement('video');
+          preview.src = e.target.result;
+          preview.controls = true;
+          preview.style.width = '100%';
+        }
+
+        wrapper.appendChild(removeBtn);
+        wrapper.appendChild(preview);
+        proofPreview.appendChild(wrapper);
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+</script>
+
+
 
       <!-- Valid Document Upload -->
-      <label>Valid Document (Min 1, Max 2) *</label>
-      <input type="file" id="validDoc" accept=".pdf,.jpg,.png" multiple required>
-      <div id="docPreview"></div>
+      <label>Valid Document (Only 1 PDF/Image) *</label>
+<input type="file" id="validDoc" accept=".pdf,.jpg,.jpeg,.png" required />
+<div id="docPreview" style="margin-top: 10px;"></div>
+
+<script>
+  const validDocInput = document.getElementById('validDoc');
+  const docPreview = document.getElementById('docPreview');
+
+  validDocInput.addEventListener('change', () => {
+    const file = validDocInput.files[0]; // only one file
+    docPreview.innerHTML = ''; // clear previous preview
+
+    if (file) {
+      const wrapper = document.createElement('div');
+      wrapper.style.position = 'relative';
+      wrapper.style.width = '200px';
+
+      const removeBtn = document.createElement('button');
+      removeBtn.textContent = 'Remove';
+      removeBtn.style.position = 'absolute';
+      removeBtn.style.top = '0';
+      removeBtn.style.right = '0';
+      removeBtn.style.background = 'red';
+      removeBtn.style.color = 'white';
+      removeBtn.style.border = 'none';
+      removeBtn.style.cursor = 'pointer';
+      removeBtn.onclick = () => {
+        validDocInput.value = '';
+        docPreview.innerHTML = '';
+      };
+
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.style.width = '100%';
+          wrapper.appendChild(removeBtn);
+          wrapper.appendChild(img);
+          docPreview.appendChild(wrapper);
+        };
+        reader.readAsDataURL(file);
+      } else if (file.type === 'application/pdf') {
+        const fileName = document.createElement('p');
+        fileName.textContent = file.name;
+        fileName.style.wordBreak = 'break-word';
+        fileName.style.fontSize = '14px';
+
+        wrapper.appendChild(removeBtn);
+        wrapper.appendChild(fileName);
+        docPreview.appendChild(wrapper);
+      }
+    }
+  });
+</script>
+
 
       <button type="submit">Submit Complaint</button>
     </form>
