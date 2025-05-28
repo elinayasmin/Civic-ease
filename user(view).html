@@ -1,93 +1,406 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Complaints - Civic Ease</title>
-    <link rel="stylesheet" href="user(view).css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>View bill</title>
+  <style>
+    :root {
+      
+      --blue-background: #f5824d;    
+      --container-bg: #ffffff;        
+      --container-shadow: rgba(0, 0, 0, 0.1);
+      --primary-color: #eb9a38;      
+      --primary-hover: #b8d843;
+      --accent-color: #b52616;         
+      --border-color: #ddd;            
+    }
+    
+    body {
+      margin: 0;
+      padding: 20px;
+      background-color: var(--blue-background);
+      font-family: sans-serif;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: var(--container-bg);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px var(--container-shadow);
+      color: #333;
+    }
+    
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    
+    .filter-section {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f9f9f9;
+      border: 1px solid var(--border-color);
+      border-radius: 5px;
+    }
+    
+    .filter-buttons {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    
+    .filter-buttons button {
+      margin: 0 5px 10px 5px;
+      padding: 8px 16px;
+      background-color: var(--primary-color);
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    
+    .filter-buttons button:hover {
+      background-color: var(--primary-hover);
+    }
+    
+    .input-section {
+      margin-top: 10px;
+      padding: 5px 0;
+    }
+    
+    .input-section label {
+      display: inline-block;
+      width: 150px;
+      font-weight: bold;
+    }
+    
+    .input-section input,
+    .input-section select {
+      padding: 5px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      margin-top: 5px;
+    }
+    
+    .input-section button.remove-filter {
+      padding: 5px 10px;
+      background-color: var(--accent-color);
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    
+    #toggle-filters-btn,
+    #search-btn {
+      display: block;
+      width: 200px;
+      margin: 20px auto;
+      padding: 10px 20px;
+      background-color: var(--primary-color);
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.3s ease;
+    }
+    
+    #toggle-filters-btn:hover,
+    #search-btn:hover {
+      background-color:green;
+    }
+    
+    #search-btn:disabled {
+      background-color: #aaa;
+      cursor: not-allowed;
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    
+    #search-result table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    #search-result thead {
+      background-color: var(--primary-color);
+      color: #fff;
+    }
+    
+    #search-result th,
+    #search-result td {
+      padding: 8px;
+      border: 1px solid var(--border-color);
+      text-align: left;
+    }
+    
+    #search-result tbody tr:nth-child(even) {
+      background-color: #f3f3f3;
+    }
+    
+    
+    #date-filter-options label {
+      margin-right: 10px;
+      display: inline-block;
+    }
+  </style>
 </head>
 <body>
-    <main id="view-complaint">
-        <h1>View Complaints</h1>
-        
-        <!-- Filter Form -->
-        <form id="filterForm">
-            <label for="complaintNumber">Complaint Number</label>
-            <input type="text" id="complaintNumber" placeholder="Enter Complaint Number">
+  <div class="container">
+    <h1>CHECK STATUS</h1>
+    <button id="toggle-filters-btn">Add Search Filters</button>
 
-            <label for="location">Location</label>
-            <input type="text" id="location" placeholder="Enter Location">
+    <div id="filters-container" class="filter-section hidden">
+      <div class="filter-buttons">
+          <button type="button" id="btn-complaint">Complaint no.</button>
+        <button type="button" id="btn-state">State</button>
+        <button type="button" id="btn-city">city</button>
+        <button type="button" id="btn-department">Department</button>
+        <button type="button" id="btn-issue">Issue</button>
+      </div>
+      <div id="filter-inputs"></div>
+    </div>
 
-            <label for="department">Department</label>
-            <select id="department">
-                <option value="">Select</option>
-                <option value="Dept 1">Dept 1</option>
-                <option value="Dept 2">Dept 2</option>
-                <option value="Dept 3">Dept 3</option>
-                <option value="Dept 4">Dept 4</option>
-                <option value="Dept 5">Dept 5</option>
-            </select>
+    <button id="search-btn">Search</button>
+    <div id="search-result"></div>
+  </div>
+  
+  <script>
+    const API_KEY = "AIzaSyCPbp72oWRMJ1VAfXCEtRglJgnyEt2-yDg";
+    const SPREADSHEET_ID = "1Kb1UcbItiMJDYSWR3MOjtKfhCzze_r9sydolTlkw98s";
+    const SHEET_NAME = "Sheet1";
+    const RANGE = "A1:Z1000";
+    const googleSheetUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}!${RANGE}?key=${API_KEY}`;
 
-            <label for="issue">Issue</label>
-            <input type="text" id="issue" placeholder="Enter Issue">
+    const toggleFiltersBtn = document.getElementById('toggle-filters-btn');
+    const filtersContainer = document.getElementById('filters-container');
+    const filterInputsContainer = document.getElementById('filter-inputs');
+    const searchBtn = document.getElementById('search-btn');
+    const resultDiv = document.getElementById('search-result');
 
-            <label for="specificLocation">Specific Location</label>
-            <input type="text" id="specificLocation" placeholder="Enter Specific Location">
+    let activeFilters = { complaint: false, state:false,city:false, department: false, issue: false };
 
-            <button type="submit">Search</button>
-        </form>
+   
+    toggleFiltersBtn.addEventListener('click', () => {
+      filtersContainer.classList.toggle('hidden');
+    });
 
-        <!-- Table for Complaint Results -->
-        <table id="complaintsTable">
-            <thead>
-                <tr>
-                    <th>Sl. No.</th>
-                    <th>Issue</th>
-                    <th>No. of Complaints</th>
-                    <th>Send to Department</th>
-                    <th>Confirmed</th>
-                    <th>Working</th>
-                    <th>Photos/Videos</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Results will be dynamically added here -->
-            </tbody>
-        </table>
-    </main>
+    
+    function updateSearchButtonState() {
+      searchBtn.disabled = !(activeFilters.complaint || activeFilters.state|| activeFilters.city|| activeFilters.department || activeFilters.issue);
+    }
+    updateSearchButtonState();
 
-    <script>
-        document.getElementById("filterForm").addEventListener("submit", function(event) {
-            event.preventDefault();
+    
+    document.getElementById('btn-complaint').addEventListener('click', () => {
+      if (!activeFilters.complaint) {
+        const complaintDiv = document.createElement('div');
+        complaintDiv.id = 'complaint-input';
+        complaintDiv.classList.add('input-section');
+        complaintDiv.innerHTML = `
+          <label for="complaint">Complaint no. :</label>
+          <input type="text" id="complaint" name="complaint" placeholder="Enter complaint number">
+          <button type="button" class="remove-filter" data-filter="complaint">Remove</button>
+        `;
+        filterInputsContainer.appendChild(complaintDiv);
+        activeFilters.complaint = true;
+      }
+      updateSearchButtonState();
+    });
+   document.getElementById('btn-state').addEventListener('click', () => {
+      if (!activeFilters.state) {
+        const stateDiv = document.createElement('div');
+        stateDiv.id = 'state-input';
+       stateDiv.classList.add('input-section');
+        stateDiv.innerHTML = `
+          <label for="state">state No.:</label>
+          <input type="text" id="state" name=state" placeholder="Enter state number">
+          <button type="button" class="remove-filter" data-filter="state">Remove</button>
+        `;
+        filterInputsContainer.appendChild(stateDiv);
+        activeFilters.state= true;
+      }
+      updateSearchButtonState();
+    });
+      document.getElementById('btn-city').addEventListener('click', () => {
+      if (!activeFilters.city) {
+        const cityDiv = document.createElement('div');
+        cityDiv.id = 'city-input';
+       cityDiv.classList.add('input-section');
+        cityDiv.innerHTML = `
+          <label for="city">city No.:</label>
+          <input type="text" id="city" name=city" placeholder="Entercitynumber">
+          <button type="button" class="remove-filter" data-filter="city">Remove</button>
+        `;
+        filterInputsContainer.appendChild(cityDiv);
+        activeFilters.city= true;
+      }
+      updateSearchButtonState();
+    });
+    
+    document.getElementById('btn-department').addEventListener('click', () => {
+      if (!activeFilters.department) {
+        const departmentDiv = document.createElement('div');
+        departmentDiv.id = 'department-input';
+        departmentDiv.classList.add('input-section');
+        departmentDiv.innerHTML = `
+          <label for="department">Department:</label>
+          <select id="department" name="department">
+            <option value="">Select Department</option>
+            <option value="Municipal Services">Municipal Services</option>
+        <option value="Public Health">Public Health</option>
+        <option value="Roads &amp; Traffic">Roads &amp; Traffic</option>
+        <option value="Electricity">Electricity</option>
+        <option value="Water Supply">Water Supply</option>
+        <option value="Sanitation">Sanitation</option>
+          </select>
+          <button type="button" class="remove-filter" data-filter="department">Remove</button>
+        `;
+        filterInputsContainer.appendChild(departmentDiv);
+        activeFilters.department = true;
+      }
+      updateSearchButtonState();
+    });
 
-            let filters = {
-                complaintNumber: document.getElementById("complaintNumber").value,
-                location: document.getElementById("location").value,
-                department: document.getElementById("department").value,
-                issue: document.getElementById("issue").value,
-                specificLocation: document.getElementById("specificLocation").value,
-            };
+   
+    document.getElementById('btn-issue').addEventListener('click', () => {
+      if (!activeFilters.issue) {
+        const issueDiv = document.createElement('div');
+        issueDiv.id = 'date-input';
+        issueDiv.classList.add('input-section');
+        issueDiv.innerHTML = `
+         <label for="issue">Issue:</label>
+          <select id="issue" name="issue">
+            <option value="Select issue">Select issue</option>
+           <option value="Potholes">Potholes</option>
+        <option value="Streetlight Outage">Streetlight Outage</option>
+        <option value="Garbage Disposal">Garbage Disposal</option>
+        <option value="Water Leakage">Water Leakage</option>
+        <option value="Other">Other</option>
+          </select>
+          <button type="button" class="remove-filter" data-filter="issue">Remove</button>
+        `;
+        filterInputsContainer.appendChild(issueDiv);
+        activeFilters.issue = true;
 
-            if (!filters.complaintNumber && !filters.location && !filters.department && !filters.issue && !filters.specificLocation) {
-                alert("Please select at least one filter option.");
+        }
+      updateSearchButtonState();
+    });
+        document.getElementById('search-btn').addEventListener('click', () => {
+    if (!(activeFilters.complaintNo || activeFilters.state || activeFilters.city || activeFilters.department || activeFilters.issue)) {
+        alert("Please select at least one search filter.");
+        return;
+    }
+
+    const filters = {};
+
+    if (activeFilters.complaintNo) {
+        filters.complaintNo = document.getElementById('complaint-no').value.trim();
+    }
+    if (activeFilters.state) {
+        filters.state = document.getElementById('state').value.trim();
+    }
+    if (activeFilters.city) {
+        filters.city = document.getElementById('city').value.trim();
+    }
+    if (activeFilters.department) {
+    const departmentElement = document.getElementById('department');
+    if (departmentElement) {
+        filters.department = departmentElement.value.trim();
+    }
+}
+if (activeFilters.issue) {
+    const issueElement = document.getElementById('issue');
+    if (issueElement) {
+        filters.issue = issueElement.value.trim();
+    }
+}
+
+
+    console.log("Searching with filters:", filters);
+
+    fetch(googleSheetUrl)
+        .then(response => response.json())
+        .then(data => {
+            console.log("API Response Data:", data);
+            const rows = data.values;
+            if (!rows || rows.length === 0) {
+                resultDiv.innerHTML = "<h2>No data found in the sheet.</h2>";
                 return;
             }
 
-            // Simulating fetching filtered data from a database
-            let results = [
-                { slno: 1, issue: "Road Repair", complaints: 5, department: "Dept 1", confirmed: "Yes", working: "No", media: "View" },
-                { slno: 2, issue: "Water Leakage", complaints: 3, department: "Dept 2", confirmed: "Yes", working: "Yes", media: "View" },
-            ];
-
-            let tbody = document.querySelector("#complaintsTable tbody");
-            tbody.innerHTML = "";
-
-            results.forEach((row, index) => {
-                let tr = document.createElement("tr");
-                tr.innerHTML = `<td>${index + 1}</td><td>${row.issue}</td><td>${row.complaints}</td><td>${row.department}</td><td>${row.confirmed}</td><td>${row.working}</td><td><a href="#">${row.media}</a></td>`;
-                tbody.appendChild(tr);
+            const headers = rows[0].map(header => header.toLowerCase());
+            const objects = rows.slice(1).map(row => {
+                const obj = {};
+                headers.forEach((header, index) => {
+                    obj[header] = row[index] ? String(row[index]).trim() : "";
+                });
+                return obj;
             });
+
+            let matchingRows = [];
+            objects.forEach(row => {
+                let score = 0;
+
+                if (filters.complaintNo && row["complaint no"]) {
+                    if (row["complaint no"].toLowerCase() === filters.complaintNo.toLowerCase()) score++;
+                }
+                if (filters.state && row["state"]) {
+                    if (row["state"].toLowerCase() === filters.state.toLowerCase()) score++;
+                }
+                if (filters.city && row["city"]) {
+                    if (row["city"].toLowerCase() === filters.city.toLowerCase()) score++;
+                }
+                if (filters.department && row["Department"]) {
+    if (row["Department"].toLowerCase() === filters.department.toLowerCase()) score++;
+}
+if (filters.issue && filters.issue !== "Select issue") {
+    if (row["issue"] && row["issue"].toLowerCase() === filters.issue.toLowerCase()) score++;
+}
+
+
+
+                if (score > 0) {
+                    matchingRows.push(row);
+                }
+            });
+
+            if (matchingRows.length > 0) {
+                let tableHTML = "<h2>Matching Rows:</h2>";
+                tableHTML += "<table><thead><tr>";
+                headers.forEach(header => {
+                    tableHTML += `<th>${header}</th>`;
+                });
+                tableHTML += "</tr></thead><tbody>";
+                matchingRows.forEach(row => {
+                    tableHTML += "<tr>";
+                    headers.forEach(header => {
+                        tableHTML += `<td>${row[header] || ""}</td>`;
+                    });
+                    tableHTML += "</tr>";
+                });
+                tableHTML += "</tbody></table>";
+                resultDiv.innerHTML = tableHTML;
+            } else {
+                resultDiv.innerHTML = "<h2>No matching rows found.</h2>";
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching data:", error);
+            resultDiv.innerHTML = "<h2>Error fetching data.</h2>";
         });
-    </script>
+});
+      
+
+        
+  </script>
 </body>
 </html>
