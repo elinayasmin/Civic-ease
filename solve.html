@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complaint Resolution Form</title>
+    <style>
+        body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  text-align: center;
+  padding: 30px 20px;
+  background-color: #e7f6e7;
+  color: #2e3d2f;
+}
+
+.container {
+  max-width: 960px;
+  margin: auto;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0, 100, 50, 0.1);
+}
+
+h1 {
+  text-align: center;
+  color: #2e7d32;
+  margin-bottom: 20px;
+}
+
+button {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  margin: 8px 5px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #388e3c;
+}
+
+.hidden {
+  display: none;
+}
+
+.filter-section {
+  margin-top: 20px;
+  background-color: #f1fdf1;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #c8e6c9;
+}
+
+.filter-buttons {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.input-section {
+  margin: 10px 0;
+}
+
+.input-section label {
+  display: inline-block;
+  width: 150px;
+  font-weight: 600;
+  color: #1b5e20;
+}
+
+.input-section input,
+.input-section select {
+  padding: 8px;
+  width: 60%;
+  margin-top: 5px;
+  border: 1px solid #81c784;
+  border-radius: 5px;
+  background-color: #f6fff9;
+}
+
+.input-section button.remove-filter {
+  background-color: #e53935;
+  margin-left: 10px;
+}
+
+.input-section button.remove-filter:hover {
+  background-color: #c62828;
+}
+
+#search-result {
+  margin-top: 30px;
+}
+
+#search-result table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#search-result th,
+#search-result td {
+  padding: 10px;
+  border: 1px solid #c8e6c9;
+  text-align: left;
+}
+
+#search-result thead {
+  background-color: #66bb6a;
+  color: white;
+}
+
+#search-result tbody tr:nth-child(even) {
+  background-color: #f1f8e9;
+}
+    </style>
+</head>
+<body>
+    <h1>Solve Complaint Form</h1>
+
+    <label for="confirmed">Confirmed:</label>
+    <input type="checkbox" id="confirmed">
+
+    <br><br>
+
+    <label for="completed">Working Status:</label>
+    <select id="completed">
+        <option value="">Select Status</option>
+        <option value="Completed">Completed</option>
+    </select>
+
+    <br><br>
+
+    <label for="department">Department:</label>
+    <select id="department">
+        <option value="">Select Department</option>
+        <option value="Municipal Services">Municipal Services</option>
+        <option value="Public Health">Public Health</option>
+        <option value="Roads & Traffic">Roads & Traffic</option>
+        <option value="Electricity">Electricity</option>
+        <option value="Water Supply">Water Supply</option>
+        <option value="Sanitation">Sanitation</option>
+    </select>
+
+    <br><br>
+
+    <label for="complaintNo">Complaint No:</label>
+    <input type="text" id="complaintNo" placeholder="Enter Complaint No">
+
+    <br><br>
+
+    <label for="issue">Issue:</label>
+    <input type="text" id="issue" placeholder="Enter Issue">
+
+    <br><br>
+
+    <label for="pincode">Pincode:</label>
+    <input type="text" id="pincode" placeholder="Enter Pincode">
+
+    <br><br>
+
+    <label for="district">District Name:</label>
+    <input type="text" id="district" placeholder="Enter District Name">
+
+    <br><br>
+
+    <label for="proof">Add Proof:</label>
+    <input type="file" id="proof">
+
+    <br><br>
+
+    <button id="generateBill" disabled>Get Bill</button>
+    <button id="confirmBtn" disabled>OK</button>
+
+    <div id="billContainer">
+        <h2 id="billTitle">Bill for <span id="billDepartment"></span></h2>
+        <p><strong>Complaint No.:</strong> <span id="billComplaintNo"></span></p>
+        <p><strong>Issue:</strong> <span id="billIssue"></span></p>
+        <p><strong>Pincode:</strong> <span id="billPincode"></span></p>
+        <p><strong>District:</strong> <span id="billDistrict"></span></p>
+        <p><strong>Proof Attached:</strong> <span id="billProof"></span></p>
+        <p style="color: green;"><strong id="billStatus"></strong></p>
+    </div>
+
+    <script>
+        
+        function getQueryParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return {
+                complaintNo: urlParams.get('number') || '',
+                state: urlParams.get('state') || '',
+                city: urlParams.get('city') || '',
+                district: urlParams.get('district') || '',
+                pincode: urlParams.get('pincode') || '',
+                department: urlParams.get('department') || '',
+                issue: urlParams.get('issue') || ''
+            };
+        }
+
+    
+        window.onload = function () {
+            const complaintData = getQueryParams();
+
+            document.getElementById("complaintNo").value = complaintData.complaintNo;
+            document.getElementById("pincode").value = complaintData.pincode;
+            document.getElementById("district").value = complaintData.district;
+            document.getElementById("department").value = complaintData.department;
+            document.getElementById("issue").value = complaintData.issue;
+        };
+
+        function validateForm() {
+            const confirmed = document.getElementById("confirmed").checked;
+            const completed = document.getElementById("completed").value;
+            const department = document.getElementById("department").value;
+            const complaintNo = document.getElementById("complaintNo").value.trim();
+            const issue = document.getElementById("issue").value.trim();
+            const pincode = document.getElementById("pincode").value.trim();
+            const district = document.getElementById("district").value.trim();
+            const proof = document.getElementById("proof").files.length > 0;
+
+            const allFilled = confirmed && completed && department && complaintNo && issue && pincode && district && proof;
+            document.getElementById("generateBill").disabled = !allFilled;
+            document.getElementById("confirmBtn").disabled = !allFilled;
+        }
+
+        document.querySelectorAll("input, select").forEach(element => {
+            element.addEventListener("input", validateForm);
+        });
+
+        // Generate bill 
+        document.getElementById("generateBill").addEventListener("click", function () {
+            const department = document.getElementById("department").value;
+            const complaintNo = document.getElementById("complaintNo").value.trim();
+            const issue = document.getElementById("issue").value.trim();
+            const pincode = document.getElementById("pincode").value.trim();
+            const district = document.getElementById("district").value.trim();
+            const proof = document.getElementById("proof").files[0] ? document.getElementById("proof").files[0].name : "No Proof Attached";
+            const status = document.getElementById("completed").value;
+
+            // Update bill 
+            document.getElementById("billDepartment").innerText = department;
+            document.getElementById("billComplaintNo").innerText = complaintNo;
+            document.getElementById("billIssue").innerText = issue;
+            document.getElementById("billPincode").innerText = pincode;
+            document.getElementById("billDistrict").innerText = district;
+            document.getElementById("billProof").innerText = proof;
+            document.getElementById("billStatus").innerText = status === "Completed" ? "Issue Resolved Successfully ✅" : "Issue Pending ⚠️";
+
+            document.getElementById("billContainer").style.display = "block";
+        });
+
+        // Confirm & store status update
+        document.getElementById("confirmBtn").addEventListener("click", function () {
+            localStorage.setItem("complaintStatus", JSON.stringify({
+                complaintNo: document.getElementById("complaintNo").value.trim(),
+                issue: document.getElementById("issue").value.trim(),
+                pincode: document.getElementById("pincode").value.trim(),
+                district: document.getElementById("district").value.trim(),
+                department: document.getElementById("department").value,
+                status: document.getElementById("completed").value
+            }));
+
+            alert("Complaint updated successfully.");
+        });
+        document.getElementById("confirmBtn").addEventListener("click", function () {
+    const complaintNo = document.getElementById("complaintNo").value.trim();
+
+
+    let solvedComplaints = JSON.parse(localStorage.getItem("solvedComplaints")) || [];
+    solvedComplaints.push(complaintNo);
+    localStorage.setItem("solvedComplaints", JSON.stringify(solvedComplaints));
+
+    // Redirect--->dept(solvecomplain) file 
+    window.location.href = "dept(solvecomplain).html";
+});
+
+    </script>
+
+</body>
+</html>

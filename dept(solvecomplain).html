@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complaint Tracker</title>
+  <style>
+    body {  
+      background-color: #82cf98;
+      color: #2d0404;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+    h2 {
+      text-align: center;
+      font-size: 28px;
+    }
+    #filterForm {
+      background-color: #e7f4d9;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 600px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      font-weight: 600;
+      margin-top: 12px;
+    }
+    select, input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #4caf50;
+      border-radius: 6px;
+      background-color: #f3dcd7;
+    }
+    button {
+      background-color: #4caf50;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 16px;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #449d48;
+    }
+  
+    table {
+      width: 100%;
+      max-width: 800px;
+      margin-top: 20px;
+      border-collapse: collapse;
+      text-align: left;
+      background-color: #e7f4d9;
+    }
+    th, td {
+      padding: 12px;
+      border: 1px solid #2d0404;
+    }
+    th {
+      background-color: #4caf50;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #cde6ed;
+    }
+    tr:nth-child(odd) {
+      background-color: #f3dcd7;
+    }
+    a {
+      color: #d32f2f;
+      font-weight: bold;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <h2>Complaint Tracker</h2>
+  
+  <div id="filterForm">
+    <label for="departmentFilter">Filter by Department:</label>
+    <select id="departmentFilter">
+      <option value="">All</option>
+      <option value="Municipal Services">Municipal Services</option>
+      <option value="Public Health">Public Health</option>
+      <option value="Roads & Traffic">Roads & Traffic</option>
+      <option value="Electricity">Electricity</option>
+      <option value="Water Supply">Water Supply</option>
+      <option value="Sanitation">Sanitation</option>
+    </select>
+    <button onclick="loadComplaints()">Load Complaints</button>
+  </div>
+  
+  <table id="complaintsTable">
+    <thead>
+      <tr>
+        <th>Complaint No.</th>
+        <th>State</th>
+        <th>City</th>
+        <th>District</th>
+        <th>Pincode</th>
+         <th>Specific location </th>
+        <th>Department</th>
+        <th>Issue</th>
+        
+        <th>Solve</th>
+        <th>Solved</th>
+      </tr>
+    </thead>
+    <tbody id="complaintsBody"></tbody>
+  </table>
+  
+  <script>
+    // --- Configuration Constants ---
+   //const SHEET_ID = "1Kb1UcbItiMJDYSWR3MOjtKfhCzze_r9sydolTlkw98s"; 
+   // const API_KEY = "AIzaSyCPbp72oWRMJ1VAfXCEtRglJgnyEt2-yDg"; 
+    const SHEET_RANGE = "Sheet1!A2:I";
+   // const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxR54galnF6scYatkVSLMZ5k8fmpZnO80N9giKh-XhckHebobchAT2WtPKx0qYITbNLbg/exec"; // Replace with your deployed Apps Script URL
+
+
+    async function loadComplaints() {
+      const departmentFilter = document.getElementById("departmentFilter").value.toLowerCase();
+      const tableBody = document.getElementById("complaintsBody");
+      tableBody.innerHTML = "";
+
+      // retrieve solved complaints from localStorage 
+      let solvedComplaints = JSON.parse(localStorage.getItem("solvedComplaints")) || [];
+
+      try {
+        // fetch complaints data from Google Sheets
+        const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_RANGE}?key=${API_KEY}`);
+        const data = await response.json();
+        const rows = data.values || [];
+        
+        rows.forEach(row => {
+      
+          const [number, state, city, district, pincode, phone, department, issue, description] = row;
+          
+  
+          if (departmentFilter && department.toLowerCase() !== departmentFilter) return;
+          
+         
+          const isSolved = solvedComplaints.includes(number.toString()) ? "checked" : "";
+          
+          // Create a table row 
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${number}</td>
+            <td>${state}</td>
+            <td>${city}</td>
+            <td>${district}</td>
+            <td>${pincode}</td>
+            <td>${department}</td>
+            <td>${issue}</td>
+            <td>${description}</td>
+            <td>
+              <a href="solve.html?number=${number}&state=${state}&city=${city}&district=${district}&pincode=${pincode}&department=${department}&issue=${issue}">
+                Solve
+              </a>
+            </td>
+            <td><input type="checkbox" ${isSolved} onchange="markAsSolved('${number}')"></td>
+          `;
+          tableBody.appendChild(tr);
+        });
+      } catch (error) {
+        console.error("Error fetching data from Google Sheets:", error);
+      
+      
+        complaints.forEach(complaint => {
+          if (departmentFilter && complaint.department.toLowerCase() !== departmentFilter) return;
+          const isSolved = solvedComplaints.includes(complaint.number.toString()) ? "checked" : "";
+          const row = `<tr>
+            <td>${complaint.number}</td>
+            <td>${complaint.state}</td>
+            <td>${complaint.city}</td>
+            <td>${complaint.district}</td>
+            <td>${complaint.pincode}</td>
+            <td>${complaint.department}</td>
+            <td>${complaint.issue}</td>
+            <td>${complaint.requests}</td>
+            <td>
+              <a href="solve.html?number=${complaint.number}&state=${complaint.state}&city=${complaint.city}&district=${complaint.district}&pincode=${complaint.pincode}&department=${complaint.department}&issue=${complaint.issue}">
+                Solve
+              </a>
+            </td>
+            <td><input type="checkbox" ${isSolved} onchange="markAsSolved('${complaint.number}')"></td>
+          </tr>`;
+          tableBody.innerHTML += row;
+        });
+      }
+    }
+
+    // mark complaint solved 
+    function markAsSolved(complaintNumber) {
+      fetch(APPS_SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify({ complaintNumber }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+      .then(res => res.text())
+      .then(res => {
+        if (res === "Success") {
+          // update-localStorage
+          let solvedComplaints = JSON.parse(localStorage.getItem("solvedComplaints")) || [];
+          if (!solvedComplaints.includes(complaintNumber.toString())) {
+            solvedComplaints.push(complaintNumber.toString());
+            localStorage.setItem("solvedComplaints", JSON.stringify(solvedComplaints));
+          }
+          alert(` Complaint ${complaintNumber} marked as solved.`);
+        } else {
+          alert(" Failed to mark as solved: " + res);
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert(" Error sending data to script.");
+      });
+    }
+    
+function markAsSolved(complaintNumber) {
+ 
+  let checkbox = document.querySelector(`input[onchange="markAsSolved('${complaintNumber}')"]`);
+  
+  let isChecked = checkbox ? checkbox.checked : false;
+  
+  // Send both the complaint number and the current solved state to your Apps Script.
+  fetch(APPS_SCRIPT_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      complaintNumber: complaintNumber,
+      solved: isChecked
+    }),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  })
+  .then(res => res.text())
+  .then(res => {
+    if (res === "Success") {
+      alert(` Complaint ${complaintNumber} updated in Sheet1 as ${isChecked ? "done" : "undone"}.`);
+    } else {
+      alert(" Failed to update: " + res);
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    alert(" Error sending data to script.");
+  });
+}
+
+  </script>
+</body>
+</html>
