@@ -1,0 +1,112 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background-color: #e6f4ea;
+  color: #2e3d2f;
+}
+
+.container {
+  max-width: 1300px;
+  margin: auto;
+  padding: 25px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 80, 40, 0.1);
+}
+
+h1 {
+  text-align: center;
+  color: #2e7d32;
+  font-size: 2em;
+}
+
+button {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  margin: 10px 5px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #388e3c;
+}
+
+.hidden {
+  display: none;
+}
+
+.filter-section {
+  margin-top: 20px;
+  background-color: #f0f9f2;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #c8e6c9;
+}
+
+.filter-buttons {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.input-section {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.input-section label {
+  display: inline-block;
+  width: 160px;
+  font-weight: 600;
+  color: #1b5e20;
+}
+
+.input-section input,
+.input-section select {
+  padding: 8px;
+  border: 1px solid #81c784;
+  border-radius: 4px;
+  width: 60%;
+  margin-top: 5px;
+  background-color: #f9fff9;
+}
+
+.input-section button.remove-filter {
+  background-color: #d32f2f;
+  margin-left: 10px;
+}
+
+.input-section button.remove-filter:hover {
+  background-color: #b71c1c;
+}
+
+#search-result {
+  margin-top: 30px;
+}
+
+#search-result table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #c8e6c9;
+}
+
+#search-result th,
+#search-result td {
+  padding: 12px;
+  border: 1px solid #c8e6c9;
+  text-align: left;
+}
+
+#search-result thead {
+  background-color: #66bb6a;
+  color: white;
+}
+
+#search-result tbody tr:nth-child(even) {
+  background-color: #f1f8e9;
+}

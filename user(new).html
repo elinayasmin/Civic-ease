@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>New Complaint </title>
+<style>
+  /* General*/
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #bddeaf;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+}
+
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 64px;
+  color: #0c5e06;
+}
+
+/*form-container */
+#formContainer {
+  background-color: #7dbe98;
+  padding: 30px 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(216, 238, 230, 0.06);
+  width: 100%;
+  max-width: 500px;
+}
+
+label {
+  display: block;
+  margin-top: 18px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #2d0404;
+}
+
+input[type="text"],
+select,
+textarea {
+  width: 100%;
+  padding: 10px 12px;
+  margin-top: 6px;
+  border: 1px solid #f5d6d6;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #e7f4d9;
+  transition: border 0.3s ease;
+}
+
+input[type="text"]:focus,
+select:focus,
+textarea:focus {
+  border-color: #4caf50;
+  outline: none;
+}
+
+
+button.submit-btn {
+  background-color: #98e89a;
+  color: rgb(10, 10, 10);
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 24px;
+  width: 100%;
+  transition: background-color 0.3s ease;
+}
+
+button.submit-btn:hover {
+  background-color: #1cd025;
+}
+
+#errorMessages {
+  margin-top: 15px;
+  color: #d32f2f;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/*responsivness */
+@media (max-width: 600px) {
+  body {
+    padding: 20px 10px;
+  }
+
+  #formContainer {
+    padding: 20px;
+  }
+}
+</style>
+</head>
+<body>
+  <h1>New Complaint</h1>
+  <div id="formContainer">
+    <label for="stateInput">State Name:</label>
+    <select id="stateInput" name="state">
+  <option value="">Select State</option><!--states-->
+         <option value="Andhra Pradesh">Andhra Pradesh</option>
+            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+            <option value="Assam">Assam</option>
+            <option value="Bihar">Bihar</option>
+            <option value="Chhattisgarh">Chhattisgarh</option>
+            <option value="Goa">Goa</option>
+            <option value="Gujarat">Gujarat</option>
+            <option value="Haryana">Haryana</option>
+            <option value="Himachal Pradesh">Himachal Pradesh</option>
+            <option value="Jharkhand">Jharkhand</option>
+            <option value="Karnataka">Karnataka</option>
+            <option value="Kerala">Kerala</option>
+            <option value="Madhya Pradesh">Madhya Pradesh</option>
+            <option value="Maharashtra">Maharashtra</option>
+            <option value="Manipur">Manipur</option>
+            <option value="Meghalaya">Meghalaya</option>
+            <option value="Mizoram">Mizoram</option>
+            <option value="Nagaland">Nagaland</option>
+            <option value="Odisha">Odisha</option>
+            <option value="Punjab">Punjab</option>
+            <option value="Rajasthan">Rajasthan</option>
+            <option value="Sikkim">Sikkim</option>
+            <option value="Tamil Nadu">Tamil Nadu</option>
+            <option value="Telangana">Telangana</option>
+            <option value="Tripura">Tripura</option>
+            <option value="Uttar Pradesh">Uttar Pradesh</option>
+            <option value="Uttarakhand">Uttarakhand</option>
+            <option value="West Bengal">West Bengal</option>
+            <!-- Union Territories -->
+            <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+            <option value="Chandigarh">Chandigarh</option>
+            <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
+            <option value="Delhi">Delhi</option>
+            <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+            <option value="Ladakh">Ladakh</option>
+            <option value="Lakshadweep">Lakshadweep</option>
+            <option value="Puducherry">Puducherry</option>
+</select>
+
+ <label for="cityInput">City Name:</label>
+    <input type="text" id="cityInput" name="cityName" placeholder="Enter city Name" />    
+
+ <label for="districtInput">District Name:</label>
+    <input type="text" id="districtInput" name="districtName" placeholder="Enter district Name" />
+
+    <label for="specificLocationInput">Specific Location Name:</label>
+    <input type="text" id="specificLocationInput" name="specificLocationName" placeholder="Enter specific location Name" />
+
+
+    <label for="pincodeInput">Pincode:</label>
+    <input type="text" id="pincodeInput" name="pincode" placeholder="Enter pincode" />
+
+
+    <label for="phoneInput">Phone Number:</label>
+    <input type="text" id="phoneInput" name="phoneNumber" placeholder="Enter phone number" />
+      <label>Department</label><!-- Department Dropdown -->
+      <select id="departmentInput" name="department">
+        <option value="Municipal Services">Municipal Services</option>
+        <option value="Public Health">Public Health</option>
+        <option value="Roads &amp; Traffic">Roads &amp; Traffic</option>
+        <option value="Electricity">Electricity</option>
+        <option value="Water Supply">Water Supply</option>
+        <option value="Sanitation">Sanitation</option>
+      </select>
+
+      <label>Issue *</label> <!-- Issue Dropdown -->
+      <select id="issueInput" name="issue" required>
+        <option value="">Select Issue</option>
+        <option value="Potholes">Potholes</option>
+        <option value="Streetlight Outage">Streetlight Outage</option>
+        <option value="Garbage Disposal">Garbage Disposal</option>
+        <option value="Water Leakage">Water Leakage</option>
+        <option value="Other">Other</option>
+      </select>
+
+<!-- Description -->
+      <label>Description *</label>
+      <textarea id="descriptionInput" required></textarea>
+<!--photos,videos,prrof-->
+      <div class="upload-container">
+    <label for="photoUpload" class="upload-btn">Upload Photos (Max: 3)</label>
+    <input type="file" id="photoUpload" accept="image/*" multiple>
+
+    <label for="videoUpload" class="upload-btn">Upload Videos (Max: 2)</label>
+    <input type="file" id="videoUpload" accept="video/*" multiple>
+
+    <label for="proofUpload" class="upload-btn">Upload Proof (PAN Card, Aadhaar - Max: 2)</label>
+    <input type="file" id="proofUpload" accept=".pdf,.jpg,.png" required>
+
+    <div id="preview"></div> 
+</div>
+<!--complaintno.-->
+ <div class="container">
+        <label for="complaintCode">Generate Complaint No:</label>
+        <button onclick="generateCode()">Generate</button>
+         <input type="text" id="complaintCode" readonly>
+        <button onclick="copyCode()">Copy</button>
+        <p id="warning"> Please ensure the code is saved!</p>
+    </div>
+
+    <button type="submit" id="submitApproval" class="submit-btn">Confirm</button>
+  </div>
+  <div id="errorMessages"></div>
+ 
+  <script>
+    
+    const SPREADSHEET_ID = "1Kb1UcbItiMJDYSWR3MOjtKfhCzze_r9sydolTlkw98s";
+    const APPEND_RANGE = "Sheet1!A:E";
+   
+    let ACCESS_TOKEN = localStorage.getItem("ACCESS_TOKEN") || null;
+    //const REFRESH_TOKEN = "1//04cAZlmi50FhxCgYIARAAGAQSNwF-L9IrYl53u7t2nwUSt8OcwgEu5SaTHlC6lDix6jjBoEA1RDBqoXoNBZLW4m3Vx6dvDtKVivk";
+
+
+  async function updateSheet() {
+  const districtElement = document.getElementById("districtInput");
+  if (!districtElement) {
+    showError("District field not found.");
+    return;
+  }
+  const stateValue = document.getElementById("stateInput").value;
+  const cityValue = document.getElementById("cityInput").value.trim();
+  const districtValue = districtElement.value.trim();
+  const specificLocationValue = document.getElementById("specificLocationInput").value.trim();
+  const pincodeValue = document.getElementById("pincodeInput").value.trim();
+  const phoneValue = document.getElementById("phoneInput").value.trim();
+  const departmentValue = document.getElementById("departmentInput").value;
+  const issueValue = document.getElementById("issueInput").value;
+  const descriptionValue = document.getElementById("descriptionInput").value.trim();
+document.getElementById('photoUpload').addEventListener('change', function(event) {
+    validateFiles(event.target, 3, 'photo');
+});
+
+document.getElementById('videoUpload').addEventListener('change', function(event) {
+    validateFiles(event.target, 2, 'video');
+});
+
+document.getElementById('proofUpload').addEventListener('change', function(event) {
+    validateFiles(event.target, 2, 'proof');
+});
+
+function validateFiles(input, maxFiles, type) {
+    if (input.files.length > maxFiles) {
+        alert(`You can only upload up to ${maxFiles} ${type}(s).`);
+        input.value = ""; // 
+    } else {
+        previewFiles(input.files);
+    }
+}
+
+function previewFiles(files) {
+    const previewContainer = document.getElementById('preview');
+    previewContainer.innerHTML = ""; // preview
+
+    Array.from(files).forEach(file => {
+        const fileType = file.type.startsWith('image') ? 'img' : file.type.startsWith('video') ? 'video' : 'div';
+        const element = document.createElement(fileType);
+        element.src = URL.createObjectURL(file);
+        element.controls = fileType === "video";
+        element.style.maxWidth = "100%";
+        element.style.marginTop = "10px";
+
+        previewContainer.appendChild(element);
+    });
+}
+
+  if (!districtValue && !specificLocationValue && !pincodeValue && !phoneValue) {
+    showError("Please fill at least one field.");
+    return;
+  }
+  //code
+  function generateCode() {
+    const state = document.getElementById("stateInput").value;
+    const city = document.getElementById("cityInput").value;
+    const pinCode = document.getElementById("pinCodeInput").value;
+    const phoneNo = document.getElementById("phoneInput").value;
+    
+    if (pinCode.length !== 6 || phoneNo.length < 10) {
+        alert("Ensure Pin Code is 6 digits and Phone Number is at least 10 digits!");
+        return;
+    }
+    
+    const lastThreeDigits = phoneNo.slice(-3); // last-3 digit
+    const count = Math.floor(Math.random() * 100) + 1; 
+
+    const complaintCode = `${state}${city}${pinCode}${lastThreeDigits}${count}`;
+    document.getElementById('complaintCode').value = complaintCode;
+}
+function copyCode() {
+    const complaintCode = document.getElementById('complaintCode');
+    complaintCode.select();
+    document.execCommand("copy");
+    alert("Code copied: " + complaintCode.value);
+}
+  const rowData = [[stateValue,cityValue,districtValue, specificLocationValue, pincodeValue, phoneValue, departmentValue, issueValue, descriptionValue]];
+  const requestBody = { values: rowData };
+
+  try {
+    await ensureAccessToken();
+  const response = await fetch(
+  `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${APPEND_RANGE}:append?valueInputOption=RAW`,
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+     // "Authorization": `Bearer ya29.a0AW4XtxhzO2EMt0SRFDJZ6X_vU-h7rgae8WzrE7etLVxQnMj_2nGzlp4sCjMIuQefIox8ZziNZmxhDXPPIgu5IRzl1aSzKRUHDuWKgS0IQowjlzyn2Dh8BuDC1gMlXGSl-PqzJQicFCFi5-l2Zw7iyuvB25HwC5f4ZK51_BbjNQaCgYKASISARcSFQHGX2MiLYdfHIyVmultBQ3kwnf-lQ0177`
+    },
+    body: JSON.stringify(requestBody)
+  }
+);
+
+    const data = await response.json();
+
+    if (response.ok) {
+      console.log("Sheet updated successfully!", data);
+      alert("Updated successfully!");
+      clearError();
+      document.querySelectorAll("input").forEach(input => input.value = "");
+    } else {
+      console.error("Error updating sheet:", data);
+      showError("Failed to update sheet: " + (data.error ? data.error.message : "Unknown error"));
+    }
+  } catch (error) {
+    console.error("Error updating sheet:", error);
+    showError("Error updating sheet: " + error.message);
+  }
+}
+
+
+
+    async function ensureAccessToken() {
+      if (!ACCESS_TOKEN) {
+        await refreshAccessToken();
+      }
+    }
+
+
+    async function refreshAccessToken() {
+      try {
+        const response = await fetch("https://oauth2.googleapis.com/token", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          body: new URLSearchParams({
+            client_id: "1033905657782-sdqqm377rsmulquujbbs2ta7gmlhlale.apps.googleusercontent.com",
+            client_secret: "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",
+            refresh_token: REFRESH_TOKEN,
+            grant_type: "refresh_token"
+          })
+        });
+        const data = await response.json();
+        if (data.access_token) {
+          ACCESS_TOKEN = data.access_token;
+          localStorage.setItem("ACCESS_TOKEN", ACCESS_TOKEN);
+        } else {
+          showError("Error refreshing token.");
+        }
+      } catch (error) {
+        showError("Unable to refresh authentication.");
+      }
+    }
+
+
+    function showError(message) {
+      document.getElementById("errorMessages").innerText = message;
+    }
+
+
+    function clearError() {
+      document.getElementById("errorMessages").innerText = "";
+    }
+
+
+  document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("submitApproval")?.addEventListener("click", async function(event) {
+        event.preventDefault();
+        await updateSheet();
+    });
+});
+
+  </script>
+</body>
+</html>
+
+
+

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>View bill</title>
+  <link rel="stylesheet" href="user(view).css">
+</head>
+
+
+<body>
+  <div class="container">
+    <h1>CHECK STATUS</h1>
+    <button id="toggle-filters-btn">Add Search Filters</button>
+
+    <div id="filters-container" class="filter-section hidden">
+      <div class="filter-buttons">
+          <button type="button" id="btn-complaint">Complaint no.</button>
+        <button type="button" id="btn-state">State</button>
+        <button type="button" id="btn-city">city</button>
+        <button type="button" id="btn-department">Department</button>
+        <button type="button" id="btn-issue">Issue</button>
+      </div>
+      <div id="filter-inputs"></div>
+    </div>
+
+    <button id="search-btn">Search</button>
+    <div id="search-result"></div>
+  </div>
+  
+  <script>
+    //connection to google sheets 
+    const API_KEY = "AIzaSyCPbp72oWRMJ1VAfXCEtRglJgnyEt2-yDg";
+    const SPREADSHEET_ID = "1Kb1UcbItiMJDYSWR3MOjtKfhCzze_r9sydolTlkw98s";
+    const SHEET_NAME = "Sheet1";
+    const RANGE = "A1:Z1000";
+    const googleSheetUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}!${RANGE}?key=${API_KEY}`;
+
+    const toggleFiltersBtn = document.getElementById('toggle-filters-btn');
+    const filtersContainer = document.getElementById('filters-container');
+    const filterInputsContainer = document.getElementById('filter-inputs');
+    const searchBtn = document.getElementById('search-btn');
+    const resultDiv = document.getElementById('search-result');
+
+    let activeFilters = { complaint: false, state:false,city:false, department: false, issue: false };
+
+   
+    toggleFiltersBtn.addEventListener('click', () => {
+      filtersContainer.classList.toggle('hidden');
+    });
+
+    
+    function updateSearchButtonState() {
+      searchBtn.disabled = !(activeFilters.complaint || activeFilters.state|| activeFilters.city|| activeFilters.department || activeFilters.issue);
+    }
+    updateSearchButtonState();
+
+    
+    document.getElementById('btn-complaint').addEventListener('click', () => {
+      if (!activeFilters.complaint) {
+        const complaintDiv = document.createElement('div');
+        complaintDiv.id = 'complaint-input';
+        complaintDiv.classList.add('input-section');
+        complaintDiv.innerHTML = `
+          <label for="complaint">Complaint no. :</label>
+          <input type="text" id="complaint" name="complaint" placeholder="Enter complaint number">
+          <button type="button" class="remove-filter" data-filter="complaint">Remove</button>
+        `;
+        filterInputsContainer.appendChild(complaintDiv);
+        activeFilters.complaint = true;
+      }
+      updateSearchButtonState();
+    });
+   document.getElementById('btn-state').addEventListener('click', () => {
+      if (!activeFilters.state) {
+        const stateDiv = document.createElement('div');
+        stateDiv.id = 'state-input';
+       stateDiv.classList.add('input-section');
+        stateDiv.innerHTML = `
+          <label for="state">State:</label>
+          <input type="text" id="state" name=state" placeholder="Enter state">
+          <button type="button" class="remove-filter" data-filter="state">Remove</button>
+        `;
+        filterInputsContainer.appendChild(stateDiv);
+        activeFilters.state= true;
+      }
+      updateSearchButtonState();
+    });
+      document.getElementById('btn-city').addEventListener('click', () => {
+      if (!activeFilters.city) {
+        const cityDiv = document.createElement('div');
+        cityDiv.id = 'city-input';
+       cityDiv.classList.add('input-section');
+        cityDiv.innerHTML = `
+          <label for="city">City:</label>
+          <input type="text" id="city" name=city" placeholder="Entercity">
+          <button type="button" class="remove-filter" data-filter="city">Remove</button>
+        `;
+        filterInputsContainer.appendChild(cityDiv);
+        activeFilters.city= true;
+      }
+      updateSearchButtonState();
+    });
+    
+    document.getElementById('btn-department').addEventListener('click', () => {
+      if (!activeFilters.department) {
+        const departmentDiv = document.createElement('div');
+        departmentDiv.id = 'department-input';
+        departmentDiv.classList.add('input-section');
+        departmentDiv.innerHTML = `
+          <label for="department">Department:</label>
+          <select id="department" name="department">
+            <option value="">Select Department</option>
+            <option value="Municipal Services">Municipal Services</option>
+        <option value="Public Health">Public Health</option>
+        <option value="Roads &amp; Traffic">Roads &amp; Traffic</option>
+        <option value="Electricity">Electricity</option>
+        <option value="Water Supply">Water Supply</option>
+        <option value="Sanitation">Sanitation</option>
+          </select>
+          <button type="button" class="remove-filter" data-filter="department">Remove</button>
+        `;
+        filterInputsContainer.appendChild(departmentDiv);
+        activeFilters.department = true;
+      }
+      updateSearchButtonState();
+    });
+
+   
+    document.getElementById('btn-issue').addEventListener('click', () => {
+      if (!activeFilters.issue) {
+        const issueDiv = document.createElement('div');
+        issueDiv.id = 'date-input';
+        issueDiv.classList.add('input-section');
+        issueDiv.innerHTML = `
+         <label for="issue">Issue:</label>
+          <select id="issue" name="issue">
+            <option value="Select issue">Select issue</option>
+           <option value="Potholes">Potholes</option>
+        <option value="Streetlight Outage">Streetlight Outage</option>
+        <option value="Garbage Disposal">Garbage Disposal</option>
+        <option value="Water Leakage">Water Leakage</option>
+        <option value="Other">Other</option>
+          </select>
+          <button type="button" class="remove-filter" data-filter="issue">Remove</button>
+        `;
+        filterInputsContainer.appendChild(issueDiv);
+        activeFilters.issue = true;
+
+        }
+      updateSearchButtonState();
+    });
+        document.getElementById('search-btn').addEventListener('click', () => {
+    if (!(activeFilters.complaintNo || activeFilters.state || activeFilters.city || activeFilters.department || activeFilters.issue)) {
+        alert("Please select at least one search filter.");
+        return;
+    }
+
+    const filters = {};
+
+    if (activeFilters.complaintNo) {
+        filters.complaintNo = document.getElementById('complaint-no').value.trim();
+    }
+    if (activeFilters.state) {
+        filters.state = document.getElementById('state').value.trim();
+    }
+    if (activeFilters.city) {
+        filters.city = document.getElementById('city').value.trim();
+    }
+    if (activeFilters.department) {
+    const departmentElement = document.getElementById('department');
+    if (departmentElement) {
+        filters.department = departmentElement.value.trim();
+    }
+}
+if (activeFilters.issue) {
+    const issueElement = document.getElementById('issue');
+    if (issueElement) {
+        filters.issue = issueElement.value.trim();
+    }
+}
+
+
+    console.log("Searching with filters:", filters);
+
+    fetch(googleSheetUrl)
+        .then(response => response.json())
+        .then(data => {
+            console.log("API Response Data:", data);
+            const rows = data.values;
+            if (!rows || rows.length === 0) {
+                resultDiv.innerHTML = "<h2>No data found in the sheet.</h2>";
+                return;
+            }
+
+            const headers = rows[0].map(header => header.toLowerCase());
+            const objects = rows.slice(1).map(row => {
+                const obj = {};
+                headers.forEach((header, index) => {
+                    obj[header] = row[index] ? String(row[index]).trim() : "";
+                });
+                return obj;
+            });
+
+            let matchingRows = [];
+            objects.forEach(row => {
+                let score = 0;
+
+                if (filters.complaintNo && row["complaint no"]) {
+                    if (row["complaint no"].toLowerCase() === filters.complaintNo.toLowerCase()) score++;
+                }
+                if (filters.state && row["state"]) {
+                    if (row["state"].toLowerCase() === filters.state.toLowerCase()) score++;
+                }
+                if (filters.city && row["city"]) {
+                    if (row["city"].toLowerCase() === filters.city.toLowerCase()) score++;
+                }
+                if (filters.department && row["Department"]) {
+    if (row["Department"].toLowerCase() === filters.department.toLowerCase()) score++;
+}
+if (filters.issue && filters.issue !== "Select issue") {
+    if (row["issue"] && row["issue"].toLowerCase() === filters.issue.toLowerCase()) score++;
+}
+
+
+
+                if (score > 0) {
+                    matchingRows.push(row);
+                }
+            });
+
+            if (matchingRows.length > 0) {
+                let tableHTML = "<h2>Matching Rows:</h2>";
+                tableHTML += "<table><thead><tr>";
+                headers.forEach(header => {
+                    tableHTML += `<th>${header}</th>`;
+                });
+                tableHTML += "</tr></thead><tbody>";
+                matchingRows.forEach(row => {
+                    tableHTML += "<tr>";
+                    headers.forEach(header => {
+                        tableHTML += `<td>${row[header] || ""}</td>`;
+                    });
+                    tableHTML += "</tr>";
+                });
+                tableHTML += "</tbody></table>";
+                resultDiv.innerHTML = tableHTML;
+            } else {
+                resultDiv.innerHTML = "<h2>No matching rows found.</h2>";
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching data:", error);
+            resultDiv.innerHTML = "<h2>Error fetching data.</h2>";
+        });
+});
+      
+
+//remove btn
+filterInputsContainer.addEventListener('click', function (e) {
+  if (e.target && e.target.matches(".remove-filter")) {
+    const filterType = e.target.getAttribute("data-filter");
+
+    // Remove div
+    const filterDiv = document.getElementById(`${filterType}-input`);
+    if (filterDiv) {
+      filterInputsContainer.removeChild(filterDiv);
+    }
+
+    // Mark that filter as inactive
+    activeFilters[filterType] = false;
+
+    // Recheck button state
+    updateSearchButtonState();
+  }
+});
+
+        
+  </script>
+</body>
+</html>
