@@ -34,8 +34,7 @@ Adding a column for the solved issue in Sheet1
 
 Drive- https://drive.google.com/drive/folders/1b-bY6k0X843kfpG8w986XJQXN7P72o1N?usp=sharing 
 
-- Screenshots:
-- Provided in the ppt 
+
 
 
 The api key ,the access token and refresh token are comment out as github doesnt allow us to upload the files with them. 
